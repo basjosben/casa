@@ -1,9 +1,7 @@
 import React from "react";
 import {
   BarChartOutlined,
-  SettingOutlined,
   TeamOutlined,
-  DesktopOutlined,
   CheckOutlined,
   MoreOutlined,
   CloseCircleOutlined,
@@ -11,12 +9,14 @@ import {
 import { Tag, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import { setPropertyStatus } from "../../apis/properties";
+import { updateUserRole } from "../../apis/users";
 
-export const getItem = (label, key, icon, children) => ({
+export const getItem = (label, key, icon, path, children) => ({
   key,
   icon,
   children,
   label,
+  path,
 });
 
 export const PROPERTY_STATUS = [
@@ -37,35 +37,48 @@ export const PROPERTY_STATUS = [
   },
 ];
 
+export const USER_STATUS = [
+  {
+    key: 1,
+    value: "standard",
+    label: "Standard",
+  },
+  {
+    key: 2,
+    value: "moderator",
+    label: "Moderator",
+  },
+  {
+    key: 3,
+    value: "admin",
+    label: "Admin",
+  },
+];
+
 export const items = [
   getItem(
     "Listings",
     "1",
     <Link to="/admin">
       <BarChartOutlined />
-    </Link>
-  ),
-  getItem(
-    "Option 2",
-    "2",
-    <Link to="/admin/option2">
-      <DesktopOutlined />
-    </Link>
+    </Link>,
+    "/admin"
   ),
   getItem(
     "Team",
-    "3",
-    <Link to="/admin/team">
+    "2",
+    <Link to="/admin/members">
       <TeamOutlined />
-    </Link>
+    </Link>,
+    "/admin/members"
   ),
-  getItem(
-    "Settings",
-    "4",
-    <Link to="/admin/settings">
-      <SettingOutlined />
-    </Link>
-  ),
+  // getItem(
+  //   "Settings",
+  //   "4",
+  //   <Link to="/admin/settings">
+  //     <SettingOutlined />
+  //   </Link>
+  // ),
 ];
 
 export const TABLE_ACTIONS = [
@@ -73,16 +86,15 @@ export const TABLE_ACTIONS = [
   { label: "Reject", icon: <CloseCircleOutlined /> },
 ];
 
-export const createTableActionsMenuItems = id =>
+export const createTableActionsMenuItems = (id, statusChangeCallback) =>
   TABLE_ACTIONS.map(({ label, icon }) => ({
     key: label,
     label,
     icon,
-    onClick: () => setPropertyStatus(id, label),
-    
+    onClick: () => setPropertyStatus(id, label, statusChangeCallback),
   }));
 
-export const columns = [
+export const buildPropertiesColumns = statusChangeCallback => [
   {
     title: "Name",
     dataIndex: "name",
@@ -107,7 +119,7 @@ export const columns = [
 
       return (
         <Tag color={color} key={type}>
-          {type.toUpperCase()}
+          {type?.toUpperCase()}
         </Tag>
       );
     },
@@ -117,7 +129,7 @@ export const columns = [
     key: "actions",
     render: (_, { id }) => (
       <Dropdown
-        menu={{ items: createTableActionsMenuItems(id) }}
+        menu={{ items: createTableActionsMenuItems(id, statusChangeCallback) }}
         trigger={["click"]}
       >
         <a onClick={e => e.preventDefault()}>
@@ -128,6 +140,45 @@ export const columns = [
   },
 ];
 
+export const USER_ACTIONS = [
+  { label: "Standard", value: "standard" },
+  { label: "Moderator", value: "moderator" },
+  { label: "Admin", value: "admin" },
+];
+
+export const createUserAction = (id, successCallback) =>
+  USER_ACTIONS.map(({ label, value }) => ({
+    key: label,
+    label,
+    onClick: () => updateUserRole(id, value, successCallback),
+  }));
+
+export const buildUsersColumns = successCallback => [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    key: "email",
+  },
+  {
+    title: "Assign Roles",
+    key: "actions",
+    render: (_, { id }) => (
+      <Dropdown
+        menu={{ items: createUserAction(id, successCallback) }}
+        trigger={["click"]}
+      >
+        <a onClick={e => e.preventDefault()}>
+          <MoreOutlined />
+        </a>
+      </Dropdown>
+    ),
+  },
+];
 
 export const properties = [
   {
@@ -154,4 +205,15 @@ export const properties = [
     tag: "isRent",
     status: "pending",
   },
+];
+
+export const ZIPCODES = [
+  "1234",
+  "10001",
+  "10002",
+  "10003",
+  "10004",
+  "10005",
+  "10006",
+  "10007",
 ];
