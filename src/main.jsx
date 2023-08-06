@@ -1,18 +1,22 @@
 import React from "react";
-import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  BrowserRouter,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Login from "components/Login";
-import Signup from "components/Signup";
-import { useUser } from "hooks/useUser";
 import AdminPanel from "./pages/AdminPanel";
-import Home from "./pages/Home";
 import ListingPage from "./pages/ListingPage";
-import Navbar from "./components/Navbar";
+import Nav from "./components/Nav";
 import Form from "./components/Form";
 import Details from "./pages/Details";
-import Testpage from "./pages/Test";
 import MyAccount from "./pages/MyAccount";
 import Members from "./components/AdminPanel/Members";
 import Properties from "./components/AdminPanel/Properties";
+import HomeTest from "./pages/HomeTest";
+import Edit from "./components/Edit";
 
 const Main = () => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -21,35 +25,29 @@ const Main = () => {
     <div className="h-screen w-screen">
       <React.StrictMode>
         <BrowserRouter>
-          <Navbar />
+          <Nav />
           <Routes>
-            <Route element={<Details />} path="/listing/:id" />
-            <Route element={<Form />} path="/add" />
             <Route element={<Login />} path="/login" />
-            <Route element={<Signup />} path="/signup" />
-            <Route element={<AdminPanel />} path="/admin">
-              <Route element={<Properties />} path="" />
-              <Route element={<Members />} path="members" />
-            </Route>
+            <Route exact element={<ListingPage />} path="/listing" />
             {isLoggedIn ? (
               <>
+                <Route exact element={<Edit />} path="/edit/:id" />
+                <Route element={<Details />} path="/listing/:id" />
                 <Route element={<ListingPage />} path="/listing" />
-                <Route exact element={<Details />} path="/details" />
+                <Route element={<Form />} path="/add" />
+                <Route element={<AdminPanel />} path="/admin">
+                  <Route element={<Properties />} path="" />
+                  <Route element={<Members />} path="members" />
+                  <Route element={<Details />} path="details/:id" />
+                </Route>
               </>
             ) : (
               <>
-                <Route
-                  element={<LoginRedirect from="/listing" />}
-                  path="/listing"
-                />
-                <Route
-                  element={<LoginRedirect from="/details" />}
-                  path="/details"
-                />
+                <Route element={<LoginRedirect />} path="/listing/:id" />
+                <Route element={<LoginRedirect />} path="/admin" />
               </>
             )}
-            <Route element={<Home />} path="/" />
-            <Route element={<Testpage />} path="/test" />
+            <Route element={<HomeTest />} path="/" />
             <Route element={<MyAccount />} path="/account" />
           </Routes>
         </BrowserRouter>
@@ -58,9 +56,10 @@ const Main = () => {
   );
 };
 
-const LoginRedirect = ({ from }) => {
+const LoginRedirect = () => {
+  const location = useLocation();
   const queryParams = new URLSearchParams(window.location.search).toString();
-  const state = { from, queryParams };
+  const state = { from: location.pathname, queryParams };
 
   return <Navigate replace state={state} to="/login" />;
 };

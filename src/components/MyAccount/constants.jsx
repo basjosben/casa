@@ -4,10 +4,11 @@ import {
   SettingOutlined,
   TeamOutlined,
   DesktopOutlined,
-  CheckOutlined,
   MoreOutlined,
   DeleteOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
+import AntdLink from "antd/es/typography/Link";
 import { Tag, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import { deletePropertyById } from "../../apis/properties";
@@ -70,35 +71,49 @@ export const items = [
 
 export const TABLE_ACTIONS = [
   { label: "Delete", icon: <DeleteOutlined /> },
+  { label: "Edit", icon: <EditOutlined />, isEdit: true },
 ];
 
-export const createTableActionsMenuItems = (id, statusChangeCallback) =>
-  TABLE_ACTIONS.map(({ label, icon }) => ({
+export const createTableActionsMenuItems = (
+  id,
+  deleteCallback,
+  navigateToEditPage
+) =>
+  TABLE_ACTIONS.map(({ label, icon, isEdit }) => ({
     key: label,
     label,
     icon,
     onClick: async () => {
-      await deletePropertyById(id);
-      statusChangeCallback();
+      if (isEdit) {
+        // If isEdit is true, navigate to the edit page
+        navigateToEditPage(id);
+      } else {
+        // Otherwise, perform the delete operation
+        await deletePropertyById(id);
+        deleteCallback();
+      }
     },
   }));
 
-export const buildColumns = statusChangeCallback => [
+export const buildColumns = (deleteCallback, navigateToEditPage) => [
   {
     title: "Name",
     dataIndex: "name",
     key: "name",
+    render: (_, { id, name }) => (
+      <AntdLink>
+        <Link target="_blank" to={`/listing/${id}`}>
+          {name}
+        </Link>
+      </AntdLink>
+    ),
   },
   {
     title: "Price",
     dataIndex: "price",
     key: "price",
   },
-  {
-    title: "Address",
-    dataIndex: "location",
-    key: "location",
-  },
+  
   {
     title: "Tags",
     key: "type",
@@ -118,8 +133,14 @@ export const buildColumns = statusChangeCallback => [
     key: "actions",
     render: (_, { id }) => (
       <Dropdown
-        menu={{ items: createTableActionsMenuItems(id, statusChangeCallback) }}
         trigger={["click"]}
+        menu={{
+          items: createTableActionsMenuItems(
+            id,
+            deleteCallback,
+            navigateToEditPage
+          ),
+        }}
       >
         <a onClick={e => e.preventDefault()}>
           <MoreOutlined />

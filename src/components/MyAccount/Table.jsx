@@ -3,18 +3,22 @@ import { Table as AntdTable, Spin } from "antd";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetPropertiesByUserId } from "../../hooks/usePropertiesApi";
 import { buildColumns } from "./constants";
+import { useNavigate } from "react-router-dom";
 import { getFromLocalStorage } from "../../hooks/useLocalStorage";
 
 const Table = ({ searchParams }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const filter = {
     keyword: searchParams.get("keyword"),
     status: searchParams.get("status"),
   };
 
-  const statusChangeCallback = () =>
+  const deleteCallback = () =>
     queryClient.invalidateQueries("getPropertiesOfAUser");
+
+  const navigateToEditPage = id => navigate(`/edit/${id}`);
 
   const buildFilteredData = data => {
     const filteredData = data.filter(obj => {
@@ -42,7 +46,7 @@ const Table = ({ searchParams }) => {
   return (
     <AntdTable
       className="mt-4"
-      columns={buildColumns(statusChangeCallback)}
+      columns={buildColumns(deleteCallback, navigateToEditPage)}
       dataSource={buildFilteredData(data)}
     />
   );

@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCiXmp3wi-OwIPsCdiPhUNjdlk9cuJlkhs",
-  authDomain: "casa-244b6.firebaseapp.com",
-  projectId: "casa-244b6",
-  storageBucket: "casa-244b6.appspot.com",
-  messagingSenderId: "627186574550",
-  appId: "1:627186574550:web:2f417cfb5a31e23c5d5577",
+  apiKey: "AIzaSyA7klJAfoucyU8p-D-RUnjG_C6X2bJq-nE",
+  authDomain: "casa-6449c.firebaseapp.com",
+  projectId: "casa-6449c",
+  storageBucket: "casa-6449c.appspot.com",
+  messagingSenderId: "843556697525",
+  appId: "1:843556697525:web:e50bebf7b3afb1f0f295fc"
 };
 
 const app = initializeApp(firebaseConfig);

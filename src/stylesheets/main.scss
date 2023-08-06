@@ -5,6 +5,12 @@
 @import "./_property-card.scss";
 @import "./_listing-page.scss";
 @import "./_test-page.scss";
+@import "./_home-page.scss";
+@import "./_slick.scss";
+
+body{
+    overflow-x: hidden;
+}
 
 .primary-text {
     color: #6941c6 !important;
