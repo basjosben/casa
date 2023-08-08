@@ -20,7 +20,7 @@ const items = [
   },
   {
     key: "AdminDashboard",
-    label: <Link to="/admin">Admin Dashboard</Link>,
+    label: <Link to="/admin">Dashboard</Link>,
     show: loggedInUserRole === "admin" || loggedInUserRole === "moderator",
   },
   {
